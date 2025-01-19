@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits } from 'discord.js'
 
 const token = process.env.DISCORD_TOKEN
 const prefix = 'lenny'
@@ -14,13 +14,13 @@ const client = new Client({ intents: [
 			  });
 
 client.once(Events.ClientReady, readyClient => {
-    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+    console.log('Ready! Logged in as ${readyClient.user.tag}');
 });
 
 client.on('messageCreate', message => {
     console.log(message);
     if (message.author.bot) return false;
-    if (message.content.indexOf(prefix) !== 0) return;
+    if (!message.content.toLowerCase().startsWith(prefix)) return false;
     message.channel.send("Hello there!");
 });
 
