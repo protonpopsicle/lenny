@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import { Client, Events, GatewayIntentBits } from 'discord.js'
+import { selection } from './google.js'
 
 const token = process.env.DISCORD_TOKEN
 const prefix = 'lenny'
@@ -14,14 +15,15 @@ const client = new Client({ intents: [
 			  });
 
 client.once(Events.ClientReady, readyClient => {
-    console.log('Ready! Logged in as ${readyClient.user.tag}');
+    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-client.on('messageCreate', message => {
-    console.log(message);
+client.on('messageCreate', async (message) => {
+    // console.log(message);
     if (message.author.bot) return false;
     if (!message.content.toLowerCase().startsWith(prefix)) return false;
-    message.channel.send("Hello there!");
+    const line = await selection()
+    message.channel.send(line);
 });
 
 // Log in to Discord with your client's token

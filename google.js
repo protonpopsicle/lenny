@@ -66,17 +66,68 @@ async function authorize() {
   return client;
 }
 
-/**
- * Prints the title of a sample doc:
- * https://docs.google.com/document/d/195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE/edit
- * @param {google.auth.OAuth2} auth The authenticated Google OAuth 2.0 client.
- */
-async function printDocTitle(auth) {
-  const docs = google.docs({version: 'v1', auth});
-  const res = await docs.documents.get({
-    documentId: '195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE',
-  });
-  console.log(`The title of the document is: ${res.data.title}`);
+/*
+Returns the text in the given ParagraphElement.
+Args:
+  element: a ParagraphElement from a Google Doc.
+*/
+function read_paragraph_element(element) {
+    if ('textRun' in element == false) {
+	return ''
+    }
+    return element['textRun']['content']
 }
 
-authorize().then(printDocTitle).catch(console.error);
+/*
+Recurses through a list of Structural Elements to read a document's text where text may be in nested elements.
+Args:
+  elements: a list of Structural Elements.
+*/
+function read_structural_elements(elements) {
+    let text = ''
+    for (const value of elements) {
+	if ('paragraph' in value) {
+	    elements = value['paragraph']['elements']
+	    for (const elem of elements) {
+		text += read_paragraph_element(elem)
+	    }
+	}
+    }
+    return text
+}
+
+function is_whitespace(str) {
+    return str.trim().length === 0;
+}
+
+function getRandomItem(arr) {
+  // Get random index  
+  const randIndex = Math.floor(Math.random() * arr.length);
+
+  // Return random element
+  return arr[randIndex];
+}
+
+async function getDocText(auth) {
+    const docs = google.docs({version: 'v1', auth});
+    const res = await docs.documents.get({
+	documentId: '1yoFCP-pb3JWQAN_dytSzY_hQPh4p9_UJ_JQGxkj5oo0',
+    });
+    const text = read_structural_elements(res.data.body.content)    
+    const lines = text.split(/\r?\n/);
+    const filtered_lines = lines.filter(function(value) {
+	return !is_whitespace(value);
+    });
+    console.log(`got ${filtered_lines.length} items`)
+    const selection = getRandomItem(filtered_lines)
+    console.log(selection);
+    return selection
+}
+
+async function selection() {
+    const auth = await authorize()
+    const selection = await getDocText(auth)
+    return selection
+}
+
+export { selection }
