@@ -1,0 +1,26 @@
+# Use the official Node.js runtime as a base image
+FROM node:23-alpine
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Create a directory for credentials
+RUN mkdir -p /usr/src/app/credentials
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install application dependencies
+RUN npm ci
+
+# Copy the rest of the application code
+COPY . .
+
+# Create volume mount points for credentials
+VOLUME ["/usr/src/app/credentials"]
+
+# Expose port (change this to match your application's port)
+EXPOSE 3000
+
+# Define the command to run the app
+CMD ["node", "app.js"]
