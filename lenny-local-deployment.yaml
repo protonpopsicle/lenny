@@ -3,10 +3,11 @@ kind: Service
 metadata:
   name: lenny-service
 spec:
-  type: LoadBalancer
+  type: NodePort  # or LoadBalancer if you're using a cloud provider
   ports:
     - port: 3000
       targetPort: 3000
+      protocol: TCP
   selector:
     app: lenny
 ---
@@ -26,8 +27,8 @@ spec:
     spec:
       containers:
       - name: lenny
-        image: us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
-        imagePullPolicy: Always
+        image: protonpopsicle/lenny
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
         envFrom:
