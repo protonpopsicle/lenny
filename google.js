@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as process from 'process';
+import 'dotenv/config';
 
 import { authenticate } from '@google-cloud/local-auth';
 import { google } from 'googleapis';
@@ -13,7 +14,7 @@ const SCOPES = ['https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = path.join(process.cwd(), 'credentials', 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials', 'credentials.json');
 
-const DOCUMENT_ID = '1yoFCP-pb3JWQAN_dytSzY_hQPh4p9_UJ_JQGxkj5oo0';
+const DOCUMENT_ID = env.process.GOOGLE_DOCUMENT_ID;
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -37,8 +38,8 @@ async function saveCredentials(client) {
   const key = keys.installed || keys.web;
   const payload = JSON.stringify({
     type: 'authorized_user',
-    client_id: key.client_id,
-    client_secret: key.client_secret,
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_secret: process.env.GOOGLE_CLIENT_SECRET,
     refresh_token: client.credentials.refresh_token,
   });
   await fs.writeFile(TOKEN_PATH, payload);

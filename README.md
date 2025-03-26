@@ -7,7 +7,7 @@ $ docker buildx build . -t user/lenny
 $ docker run --rm --env-file .env --name lenny -p 3000:3000 user/lenny
 ```
 
-## Kubernetes
+## Run with Kubernetes
 ```
 $ eval $(minikube -p minikube docker-env)
 $ docker buildx build . -t user/lenny
