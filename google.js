@@ -14,7 +14,7 @@ const SCOPES = ['https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = path.join(process.cwd(), 'credentials', 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials', 'credentials.json');
 
-const DOCUMENT_ID = env.process.GOOGLE_DOCUMENT_ID;
+const DOCUMENT_ID = process.GOOGLE_DOCUMENT_ID;
 
 /**
  * Reads previously authorized credentials from the save file.
