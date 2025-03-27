@@ -1,76 +1,17 @@
-import { promises as fs } from 'fs';
-import * as path from 'path';
 import * as process from 'process';
 import 'dotenv/config';
 
-import { authenticate } from '@google-cloud/local-auth';
+import { GoogleAuth } from 'google-auth-library';
 import { google } from 'googleapis';
 
-// If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/documents'];
-// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
-const TOKEN_PATH = path.join(process.cwd(), 'credentials', 'token.json');
-const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials', 'credentials.json');
+const DOCUMENT_ID = process.env.G_DOCUMENT_ID;
 
-const DOCUMENT_ID = process.GOOGLE_DOCUMENT_ID;
-
-/**
- * Reads previously authorized credentials from the save file.
- */
-async function loadSavedCredentialsIfExist() {
-  try {
-    const content = await fs.readFile(TOKEN_PATH);
-    const credentials = JSON.parse(content);
-    return google.auth.fromJSON(credentials);
-  } catch (err) {
-    return null;
-  }
-}
-
-/**
- * Serializes credentials to a file compatible with GoogleAuth.fromJSON.
- */
-async function saveCredentials(client) {
-  const content = await fs.readFile(CREDENTIALS_PATH);
-  const keys = JSON.parse(content);
-  const key = keys.installed || keys.web;
-  const payload = JSON.stringify({
-    type: 'authorized_user',
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    client_secret: process.env.GOOGLE_CLIENT_SECRET,
-    refresh_token: client.credentials.refresh_token,
-  });
-  await fs.writeFile(TOKEN_PATH, payload);
-}
-
-async function checkCredentialsExist() {
-  try {
-    await fs.access(CREDENTIALS_PATH);
-  } catch (error) {
-    throw new Error('credentials.json is missing. Please set up Google OAuth credentials.');
-  }
-}
-
-/**
- * Load or request or authorization to call APIs.
- */
-async function authorize() {
-  await checkCredentialsExist();
-  let client = await loadSavedCredentialsIfExist();
-  if (client) {
-    return client;
-  }
-  client = await authenticate({
-    scopes: SCOPES,
-    keyfilePath: CREDENTIALS_PATH,
-  });
-  if (client.credentials) {
-    await saveCredentials(client);
-  }
-  return client;
-}
+const keys = JSON.parse(process.env.G_CREDS);
+const auth = new GoogleAuth({
+  credentials: keys,
+  scopes: ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/documents'],
+});
+const client = await auth.getClient();
 
 /**
  * Returns the text in the given ParagraphElement.
@@ -133,8 +74,7 @@ async function getDocText(auth) {
 
 async function selection() {
   try {
-    const auth = await authorize();
-    const selection = await getDocText(auth);
+    const selection = await getDocText(client);
     return selection;
   } catch (err) {
     console.error('Error selecting document:', err);

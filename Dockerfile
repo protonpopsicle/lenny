@@ -16,9 +16,6 @@ RUN npm ci
 # Copy the rest of the application code
 COPY . .
 
-# Create volume mount points for credentials
-VOLUME ["/usr/src/app/credentials"]
-
 # Expose port (change this to match your application's port)
 EXPOSE 3000
 
