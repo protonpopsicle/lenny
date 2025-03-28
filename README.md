@@ -14,8 +14,8 @@ $ eval $(minikube -p minikube docker-env)
 $ docker buildx build . -t user/lenny
 
 # for GKE
-$ gcloud builds submit \
-  --tag us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke .
+$ docker buildx build --platform linux/amd64 . -t us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
+$ docker push us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
 
 # same same
 $ kubectl create configmap lenny-config --from-env-file=.env
