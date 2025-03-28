@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: lenny
-        image: protonpopsicle/lenny
+        image: user/lenny
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
