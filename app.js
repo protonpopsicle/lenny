@@ -1,12 +1,12 @@
 import 'dotenv/config';
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { selection } from './google.js';
+import { speak } from './l19.js'
 
 const token = process.env.DISCORD_TOKEN;
 if (!token) {
   throw new Error('DISCORD_TOKEN is not set in environment variables');
 }
-const prefix = 'lenny';
 
 // Create a new client instance
 const client = new Client({
@@ -25,15 +25,23 @@ client.once(Events.ClientReady, readyClient => {
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return false;
-  if (!message.content.toLowerCase().startsWith(prefix)) return false;
+
+  let line = null;
+
   try {
-    const line = await selection();
+    if (message.content.toLowerCase().startsWith('lenny')) {
+      line = await selection();
+    } else if (message.content.toLowerCase().startsWith('l19')) {
+      line = await speak();
+    } else {
+      return false;
+    }
     if (!line) {
-      return message.channel.send('Aw snap, I couldn\'t get a quote right now.');
+      line = 'Aw snap, I couldn\'t get a quote right now.';
     }
     await message.channel.send(line);
   } catch (error) {
-    console.error('Error in message handler:', error);
+    console.error('Error in message handler:', error);  
   }
 });
 
