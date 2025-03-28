@@ -4,9 +4,6 @@ FROM node:23-alpine
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Create a directory for credentials
-RUN mkdir -p /usr/src/app/credentials
-
 # Copy package.json and package-lock.json
 COPY package*.json ./
 

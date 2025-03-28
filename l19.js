@@ -1,4 +1,4 @@
-import vocab from "./vocab.json" with { type: "json" };
+import { vocab } from "./vocab.js";
 
 // Helper function to shuffle array
 function shuffleArray(array) {
