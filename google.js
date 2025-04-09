@@ -1,4 +1,3 @@
-import * as process from 'process';
 import 'dotenv/config';
 
 import { GoogleAuth } from 'google-auth-library';
