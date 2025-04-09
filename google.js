@@ -1,5 +1,6 @@
 import 'dotenv/config';
 
+import { run } from './db.js';
 import { GoogleAuth } from 'google-auth-library';
 import { google } from 'googleapis';
 
@@ -80,5 +81,7 @@ async function selection() {
     return null;
   }
 }
+
+run().catch(console.dir);
 
 export { selection };

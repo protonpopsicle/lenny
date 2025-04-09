@@ -21,6 +21,7 @@
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",
     "google-auth-library": "^9.15.1",
-    "googleapis": "^105.0.0"
+    "googleapis": "^105.0.0",
+    "mongodb": "^6.15.0"
   }
 }
