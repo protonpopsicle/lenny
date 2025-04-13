@@ -37,7 +37,7 @@ client.on('messageCreate', async (message) => {
       return false;
     }
     if (!line) {
-      line = 'Aw snap, I couldn\'t get a quote right now.';
+      line = 'Aw snap, I couldn\'t speak right now.';
     }
     await message.channel.send(line);
   } catch (error) {

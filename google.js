@@ -13,6 +13,9 @@ const auth = new GoogleAuth({
 });
 const client = await auth.getClient();
 
+let quotes = [];
+let lastRefresh = Date.now();
+
 /**
  * Returns the text in the given ParagraphElement.
  */
@@ -51,7 +54,8 @@ function getRandomItem(arr) {
   return arr[randIndex];
 }
 
-async function getDocText(auth) {
+async function refreshDocText(auth) {
+  console.log('Fetch the Google Doc');
   try {
     const docs = google.docs({ version: 'v1', auth });
     const res = await docs.documents.get({
@@ -65,23 +69,46 @@ async function getDocText(auth) {
     if (!filteredLines.length) {
       throw new Error('No valid lines found in document');
     }
-    
-    return getRandomItem(filteredLines);
+    lastRefresh = Date.now();
+    return filteredLines;
   } catch (error) {
     throw new Error(`Failed to get document text: ${error.message}`);
   }
 }
 
+async function getRandomQuote() {
+  // if there are no quotes in memory, fetch the Google Doc (a bit slow)
+  if (!quotes.length) {
+    console.log('No quotes in memory');
+    quotes = await refreshDocText(client);
+  }
+  if (lastRefresh < Date.now() - (5 * 60 * 1000)) {
+    console.log('It has been 5 minutes since data was refreshed from google docs');
+    refreshDocText(client).then(function(result) {
+      console.log('Refresh complete');
+      quotes = result;
+    });
+  }
+  return getRandomItem(quotes);
+}
+
 async function selection() {
   try {
-    const selection = await getDocText(client);
+    const selection = await getRandomQuote();
+    console.log(selection);
     return selection;
   } catch (err) {
-    console.error('Error selecting document:', err);
+    console.error('Error selecting quote:', err);
     return null;
   }
 }
 
+// don't really need this right now
 run().catch(console.dir);
+
+refreshDocText(client).then(function(result) {
+  console.log('Initial load complete');
+  quotes = result;
+});
 
 export { selection };
