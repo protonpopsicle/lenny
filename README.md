@@ -23,8 +23,17 @@ $ kubectl apply -f lenny-deployment.yaml
 % kubectl logs -l app=lenny
 ```
 
-For GKE, same steps as above but Docker steps slightly different. Example:
+## GKE
+
+same steps as above but Docker steps slightly different. Example:
 ```
 $ docker buildx build --platform linux/amd64 . -t us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
 $ docker push us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
 ```
+
+To find public URL
+```
+$ kubectl describe service lenny
+```
+
+Look for "LoadBalancer Ingress"
