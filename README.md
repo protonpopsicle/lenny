@@ -3,37 +3,34 @@ Lenny is a Discord bot
 
 ## Create .env
 ```
-$ cp .env.example .env
+% cp .env.example .env
 ```
 
 Populate the values in the .env file so code has access to necessary environment variables at run time.
 
-## How to run with Docker
+## Run with Docker
 ```
-$ docker buildx build . -t user/lenny
-$ docker run --rm --env-file .env --name lenny -p 3000:3000 user/lenny
-```
-
-## How to run with Kubernetes (local example with Minikube)
-```
-$ eval $(minikube -p minikube docker-env)
-$ docker buildx build . -t user/lenny
-$ kubectl create configmap lenny-config --from-env-file=.env
-$ kubectl apply -f lenny-deployment.yaml
-% kubectl logs -l app=lenny
+% docker buildx build . -t user/lenny
+% docker run --rm --env-file .env --name lenny -p 3000:3000 user/lenny
 ```
 
-## GKE
-
-same steps as above but Docker steps slightly different. Example:
+## Google Compute Engine VM
 ```
-$ docker buildx build --platform linux/amd64 . -t us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
-$ docker push us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
-```
-
-To find public URL
-```
-$ kubectl describe service lenny
+% docker buildx build --platform linux/amd64 . -t us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
+% docker push us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest
+% gcloud compute instances create-with-container lenny-instance \
+--container-image us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest \
+--zone us-west1-a \
+--container-env-file .env \
+--machine-type e2-micro
 ```
 
-Look for "LoadBalancer Ingress"
+## Update rather than create VM
+```
+% gcloud compute instances update-container lenny-instance \
+--container-image us-west1-docker.pkg.dev/lenny-448217/lenny-repo/lenny-gke:latest \
+--zone us-west1-a
+```
+
+Reference: https://cloud.google.com/compute/docs/containers/configuring-options-to-run-containers
+

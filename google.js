@@ -1,6 +1,5 @@
 import 'dotenv/config';
 
-import { run } from './db.js';
 import { GoogleAuth } from 'google-auth-library';
 import { google } from 'googleapis';
 
@@ -103,10 +102,7 @@ async function selection() {
   }
 }
 
-// don't really need this right now
-run().catch(console.dir);
-
-refreshDocText(client).then(function(result) {
+await refreshDocText(client).then(function(result) {
   console.log('Initial load complete');
   quotes = result;
 });

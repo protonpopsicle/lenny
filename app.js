@@ -1,16 +1,7 @@
 import 'dotenv/config';
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { selection } from './google.js';
 import { speak } from './l19.js'
-
-const app = express();
-const port = 3000; // Or any other port you prefer
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const token = process.env.DISCORD_TOKEN;
 if (!token) {
@@ -56,15 +47,3 @@ client.on('messageCreate', async (message) => {
 
 // Log in to Discord with your client's token
 client.login(token);
-    
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'build')));
-    
-// Optional: Handle requests for the root path ("/")
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-    
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
